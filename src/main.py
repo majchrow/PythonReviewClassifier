@@ -2,10 +2,10 @@
 
 import sys
 from PyQt5.QtWidgets import QApplication
-from src.view import ViewWindow
+from src.view import StartWindow
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    mainWin = ViewWindow()
+    mainWin = StartWindow()
     mainWin.show()
     sys.exit( app.exec_() )
