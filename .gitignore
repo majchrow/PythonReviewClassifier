@@ -1,6 +1,9 @@
 # PyCharm
 .idea/
 
+# Dictionaries
+models/
+data/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

@@ -5,6 +5,7 @@ from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtWidgets import QMainWindow, QLabel, QGridLayout, QWidget, QPushButton, QFrame, QVBoxLayout, QPlainTextEdit
 from PyQt5.QtCore import QSize
 
+IMAGES_LAYOUTS_PATH = 'images/layouts/'
 
 class Window(QMainWindow):
     def __init__(self):
@@ -47,7 +48,7 @@ class StartWindow(Window):
         additionalLayout.setColumnStretch(4, 5)
 
         label = QLabel(self)
-        pixmap = QPixmap('../images/main.jpg')
+        pixmap = QPixmap(IMAGES_LAYOUTS_PATH + 'main.jpg')
         label.setPixmap(pixmap)
         label.resize(pixmap.width(), pixmap.height())
         gridLayout.addWidget(label, 2, 2)
@@ -130,11 +131,11 @@ class MenuWindow(Window):
         gridLayout.addLayout(additionalLayout, 2, 1)'''
 
         label = QLabel(self)
-        label.setPixmap(QPixmap('../images/network.jpeg'))
+        label.setPixmap(QPixmap(IMAGES_LAYOUTS_PATH + 'network.jpeg'))
         label1 = QLabel(self)
-        label1.setPixmap(QPixmap('../images/film.jpg'))
+        label1.setPixmap(QPixmap(IMAGES_LAYOUTS_PATH + 'film.jpg'))
         label2 = QLabel(self)
-        label2.setPixmap(QPixmap('../images/text.png'))
+        label2.setPixmap(QPixmap(IMAGES_LAYOUTS_PATH + 'text.png'))
         #.scaled(400, 500, QtCore.Qt.KeepAspectRatio))
         gridLayout.addWidget(label, 1, 1)
         gridLayout.addWidget(label1, 1, 2)
