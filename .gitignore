@@ -1,9 +1,9 @@
 # PyCharm
 .idea/
 
-# Dictionaries
-models/
-data/
+# Trained models
+models/classifier/*
+models/language/*
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

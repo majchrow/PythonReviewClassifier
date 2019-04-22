@@ -2,17 +2,25 @@
 
 from PyQt5 import QtCore
 from PyQt5.QtGui import QPixmap, QFont
-from PyQt5.QtWidgets import QMainWindow, QLabel, QGridLayout, QWidget, QPushButton, QFrame, QVBoxLayout, QPlainTextEdit
+from PyQt5.QtWidgets import QMainWindow, QLabel, QGridLayout
+from PyQt5.QtWidgets import QWidget, QPushButton, QFrame, QVBoxLayout, QPlainTextEdit, QDesktopWidget
 from PyQt5.QtCore import QSize
 
 IMAGES_LAYOUTS_PATH = 'images/layouts/'
 
+def center(Window):
+    qtRectangle = Window.frameGeometry()
+    centerPoint = QDesktopWidget().availableGeometry().center()
+    qtRectangle.moveCenter(centerPoint)
+    Window.move(qtRectangle.topLeft())
+
 class Window(QMainWindow):
     def __init__(self):
-        QMainWindow.__init__(self)
+        super().__init__()
         self.setMinimumSize(QSize(960, 500))
         self.setMaximumSize(QSize(960, 500))
         self.setWindowTitle("Review Classifier")
+        center(self)
         self.init_ui()
 
     def init_ui(self):
@@ -20,7 +28,7 @@ class Window(QMainWindow):
 
 class StartWindow(Window):
     def __init__(self):
-        Window.__init__(self)
+        super().__init__()
         self.setStyleSheet("background-color: black")
 
 
@@ -71,7 +79,7 @@ class StartWindow(Window):
 
 class MenuWindow(Window):
     def __init__(self):
-        Window.__init__(self)
+        super().__init__()
         self.setStyleSheet("background-color: white")
         self.dialog_choose = ChooseWindow()
         self.dialog_generate = GenerateWindow()
@@ -155,7 +163,7 @@ class MenuWindow(Window):
 
 class ChooseWindow(Window):
     def __init__(self):
-        Window.__init__(self)
+        super().__init__()
         self.setStyleSheet("background-color: rgb(141, 194, 210)")
         self.init_ui()
 
@@ -164,7 +172,7 @@ class ChooseWindow(Window):
 
 class GenerateWindow(Window):
     def __init__(self):
-        Window.__init__(self)
+        super().__init__()
         self.setStyleSheet("background-color: rgb(141, 194, 210)")
         self.init_ui()
 
@@ -173,7 +181,7 @@ class GenerateWindow(Window):
 
 class ClassifyWindow(Window):
     def __init__(self):
-        Window.__init__(self)
+        super().__init__()
         self.setStyleSheet("background-color: rgb(141, 194, 210)")
 
     def init_ui(self):
@@ -232,7 +240,7 @@ class ClassifyWindow(Window):
 class MessageWindow(QMainWindow):
 
     def __init__(self):
-        QMainWindow.__init__(self)
+        super().__init__()
         self.setMinimumSize(QSize(400, 200))
         self.setMaximumSize(QSize(400, 200))
         self.setWindowTitle("Message")
