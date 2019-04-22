@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 
-import sys
-from PyQt5.QtWidgets import QApplication
-from View.view import StartWindow
+from Controller.utils import Start
+from sys import exit
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    mainWin = StartWindow()
-    mainWin.show()
-    sys.exit(app.exec_())
+    c = Start()
+    exit(c.run())

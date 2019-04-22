@@ -3,8 +3,11 @@
 from fastai.text import load_learner
 from os import listdir
 
-PATH_LM = 'new/models/language/'
-PATH_CLF = 'new/models/classifier/'
+# All language models are stored in models/language directory
+# All classifier are stored in models/classifier directory
+
+PATH_LM = 'models/language/'
+PATH_CLF = 'models/classifier/'
 
 
 def get_lm():
@@ -19,9 +22,9 @@ def get_clf():
 
 def load_lm(lm_name):
     """Return the trained language models"""
-    load_learner(path=PATH_LM, file=lm_name)
+    return load_learner(path=PATH_LM, file=lm_name)
 
 
 def load_clf(clf_name):
     """Return the trained classifier"""
-    load_learner(path=PATH_CLF, file=clf_name)
+    return load_learner(path=PATH_CLF, file=clf_name)

@@ -5,14 +5,10 @@ from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtWidgets import QMainWindow, QLabel, QGridLayout
 from PyQt5.QtWidgets import QWidget, QPushButton, QFrame, QVBoxLayout, QPlainTextEdit, QDesktopWidget
 from PyQt5.QtCore import QSize
+from Model.model import Classifier
 
 IMAGES_LAYOUTS_PATH = 'images/layouts/'
 
-def center(Window):
-    qtRectangle = Window.frameGeometry()
-    centerPoint = QDesktopWidget().availableGeometry().center()
-    qtRectangle.moveCenter(centerPoint)
-    Window.move(qtRectangle.topLeft())
 
 class Window(QMainWindow):
     def __init__(self):
@@ -20,17 +16,23 @@ class Window(QMainWindow):
         self.setMinimumSize(QSize(960, 500))
         self.setMaximumSize(QSize(960, 500))
         self.setWindowTitle("Review Classifier")
-        center(self)
+        self.Center()
         self.init_ui()
 
     def init_ui(self):
         pass
 
+    def _center(self):
+        qtRectangle = self.frameGeometry()
+        centerPoint = QDesktopWidget().availableGeometry().center()
+        qtRectangle.moveCenter(centerPoint)
+        self.move(qtRectangle.topLeft())
+
+
 class StartWindow(Window):
     def __init__(self):
         super().__init__()
         self.setStyleSheet("background-color: black")
-
 
     def init_ui(self):
         centralWidget = QWidget(self)
@@ -38,13 +40,13 @@ class StartWindow(Window):
 
         gridLayout = QGridLayout(self)
         centralWidget.setLayout(gridLayout)
-        #title = QLabel("Classify your review", self)
-        #title.setAlignment(QtCore.Qt.AlignCenter)
-        #gridLayout.addWidget(title, 0, 0)
+        # title = QLabel("Classify your review", self)
+        # title.setAlignment(QtCore.Qt.AlignCenter)
+        # gridLayout.addWidget(title, 0, 0)
 
         additionalLayout = QGridLayout(self)
 
-        additionalLayout.setRowStretch(0,5)
+        additionalLayout.setRowStretch(0, 5)
         additionalLayout.setRowStretch(1, 5)
         additionalLayout.setRowStretch(2, 5)
         additionalLayout.setRowStretch(3, 5)
@@ -63,18 +65,15 @@ class StartWindow(Window):
 
         button = QPushButton('Start')
         button.setStyleSheet("background-color: white")
-        #button.setGeometry(0, 0, 50, 50)
+        # button.setGeometry(0, 0, 50, 50)
         button.clicked.connect(self.start)
         self.dialog = MenuWindow()
-        additionalLayout.addWidget(button,2,2)
+        additionalLayout.addWidget(button, 2, 2)
         gridLayout.addLayout(additionalLayout, 2, 2)
-
-
 
     def start(self):
         self.close()
         self.dialog.show()
-
 
 
 class MenuWindow(Window):
@@ -91,7 +90,6 @@ class MenuWindow(Window):
 
         gridLayout = QGridLayout(self)
         centralWidget.setLayout(gridLayout)
-
 
         button = QPushButton('Choose model')
         button1 = QPushButton('Classify your review')
@@ -120,7 +118,7 @@ class MenuWindow(Window):
         gridLayout.addWidget(button1, 2, 2)
         gridLayout.addWidget(button2, 2, 3)
 
-        #additionalLayout = QGridLayout(self)
+        # additionalLayout = QGridLayout(self)
 
         '''additionalLayout.setRowStretch(0, 5)
         additionalLayout.setRowStretch(1, 5)
@@ -144,7 +142,7 @@ class MenuWindow(Window):
         label1.setPixmap(QPixmap(IMAGES_LAYOUTS_PATH + 'film.jpg'))
         label2 = QLabel(self)
         label2.setPixmap(QPixmap(IMAGES_LAYOUTS_PATH + 'text.png'))
-        #.scaled(400, 500, QtCore.Qt.KeepAspectRatio))
+        # .scaled(400, 500, QtCore.Qt.KeepAspectRatio))
         gridLayout.addWidget(label, 1, 1)
         gridLayout.addWidget(label1, 1, 2)
         gridLayout.addWidget(label2, 1, 3)
@@ -161,6 +159,7 @@ class MenuWindow(Window):
         self.close()
         self.dialog_classify.show()
 
+
 class ChooseWindow(Window):
     def __init__(self):
         super().__init__()
@@ -170,6 +169,7 @@ class ChooseWindow(Window):
     def init_ui(self):
         pass
 
+
 class GenerateWindow(Window):
     def __init__(self):
         super().__init__()
@@ -178,6 +178,7 @@ class GenerateWindow(Window):
 
     def init_ui(self):
         pass
+
 
 class ClassifyWindow(Window):
     def __init__(self):
@@ -200,7 +201,6 @@ class ClassifyWindow(Window):
         text_area.setStyleSheet("background-color: white")
         text_area.insertPlainText("Write your review here.\n")
 
-
         button = QPushButton("Get back")
         button.setStyleSheet("background-color: white")
         button.clicked.connect(self.back)
@@ -210,7 +210,7 @@ class ClassifyWindow(Window):
         button2.clicked.connect(self.classify)
 
         gridLayout.addWidget(text_area, 0, 0, 2, 2)
-        #gridLayout.addWidget(button, 0, 1)
+        # gridLayout.addWidget(button, 0, 1)
 
         additionalLayout = QGridLayout(self)
 
@@ -241,8 +241,8 @@ class MessageWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.setMinimumSize(QSize(400, 200))
-        self.setMaximumSize(QSize(400, 200))
+        self.setMinimumSize(QSize(600, 200))
+        self.setMaximumSize(QSize(600, 200))
         self.setWindowTitle("Message")
         self.setStyleSheet("background-color: white")
         self.init_ui()
@@ -264,7 +264,9 @@ class MessageWindow(QMainWindow):
 
         label = QLabel(self)
         label.setFont(QFont("Arial", 12, QFont.Black))
-        classification = "positive"
-        label.setText("Your review was classified as {}.".format(classification))
+        clf = Classifier() # this needs to be moved to controller, with all the view things
+        clf.clf = "clf.pkl"
+        prediction, proba = clf.predict("The best movie I've ever seen!")
+        label.setText(f"Your review was classified as {prediction} with probability {proba:1.3f}%.")
 
         gridLayout.addWidget(label, 1, 1)

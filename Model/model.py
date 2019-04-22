@@ -20,6 +20,7 @@ def singleton(class_):
 @singleton
 class LanguageModel:
     """Language Model to predicts next words in a sentence. Used to generate text."""
+
     def __init__(self):
         self._lm = None
 
@@ -41,6 +42,7 @@ class LanguageModel:
 @singleton
 class Classifier:
     """Model to classify movies reviews as good or bad"""
+
     def __init__(self):
         self._clf = None
 
@@ -57,4 +59,5 @@ class Classifier:
         """Return predicted class and probability (>=0.5)"""
         if self.clf is not None:
             prediction = self.clf.predict(review)
-            return prediction[0], prediction[2][1] if prediction[0] == "pos" else prediction[0], prediction[2][0]
+            proba = prediction[2][1].data.cpu().numpy().round(3)  # cast torch tensor to numpy float value
+            return ("positive", proba) if proba > 0.5 else ("negative", 1-proba)
