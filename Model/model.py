@@ -23,15 +23,21 @@ class LanguageModel:
 
     def __init__(self):
         self._lm = None
+        self._lm_name = ""
 
     @property
     def lm(self):
         return self._lm
 
+    @property
+    def lm_name(self):
+        return self._lm_name
+
     @lm.setter
     def lm(self, name):
         if name in get_lm():
             self._lm = load_lm(name)
+            self._lm_name = name
 
     def predict(self, text, n_words=50, temperature=0.75):
         """Return text with n_words that come after text"""
@@ -45,15 +51,21 @@ class Classifier:
 
     def __init__(self):
         self._clf = None
+        self._clf_name = ""
 
     @property
     def clf(self):
         return self._clf
 
+    @property
+    def clf_name(self):
+        return self._clf_name
+
     @clf.setter
     def clf(self, name):
         if name in get_clf():
             self._clf = load_clf(name)
+            self._clf_name = name
 
     def predict(self, review):
         """Return predicted class and probability (>=0.5)"""
