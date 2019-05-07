@@ -4,8 +4,10 @@ from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtWidgets import QMainWindow, QLabel, QGridLayout, QLineEdit, QListWidget, QComboBox
 from PyQt5.QtWidgets import QWidget, QPushButton, QFrame, QVBoxLayout, QPlainTextEdit, QDesktopWidget
 from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtGui import QIcon
 
 IMAGES_LAYOUTS_PATH = 'images/layouts/'
+IMAGES_ICON_PATH = 'images/icons/'
 
 
 class Window(QMainWindow):
@@ -16,6 +18,7 @@ class Window(QMainWindow):
         self.setWindowTitle("Review Classifier")
         self.controller = controller
         self._center()
+        self.setWindowIcon(QIcon(IMAGES_ICON_PATH + 'window_icon.png'))
 
     def add_layout(self, columns, rows, c_stretch, r_stretch):
         layout = QGridLayout(self)
