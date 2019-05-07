@@ -61,15 +61,15 @@ class TrainerController:
     def get_cm(self):
         return Model.loader.get_clf()
 
-    def on_click_item_cm(self):
-        item = self._view.list_widget_cm.currentItem()
-        self._clf.clf = item.text()
-        self._view.current_cm_model.setText(self._clf.clf_name)
+    def on_click_apply_clf(self):
+        clf = self._view.combo_box_clf.currentText()
+        self._clf.clf = clf
+        self._view.current_clf.setText(self._clf.clf_name)
 
-    def on_click_item_lm(self):
-        item = self._view.list_widget_lm.currentItem()
-        self._lm.lm = item.text()
-        self._view.current_lm_model.setText(self._lm.lm_name)
+    def on_click_apply_lm(self):
+        lm = self._view.combo_box_lm.currentText()
+        self._lm.lm = lm
+        self._view.current_lm.setText(self._lm.lm_name)
 
     def on_click_back(self):
         self.dialog_back = MenuController()
@@ -84,6 +84,21 @@ class LanguageController:
 
     def run(self):
         self._view.show()
+
+    def get_current_model(self):
+        return LanguageModel().lm_name
+
+    def on_click_generate(self):
+        n_words = int(self._view.n_words.text())
+        text = str(self._view.text_area.toPlainText())
+        gen_text = self._lm.predict(text, n_words)
+        self._view.text_area.clear()
+        self._view.text_area.insertPlainText(gen_text)
+
+    def on_click_back(self):
+        self.dialog_back = MenuController()
+        self._view.close()
+        self.dialog_back.run()
 
 
 class ClassifierController:
@@ -100,7 +115,6 @@ class ClassifierController:
 
     def on_click_classify(self):
         review = str(self._view.text_area.toPlainText())
-        self._clf.clf = "clf.pkl"
         prediction, proba = self._clf.predict(review)
         self.dialog_message.__setattr__("prediction", prediction)
         self.dialog_message.__setattr__("proba", proba)
@@ -119,5 +133,6 @@ class MessageController:
         self.proba = 0.0
 
     def run(self):
-        self._view.label.setText(f"Your review was classified as {self.prediction} with probability {self.proba:1.3f}%.")
+        self._view.label.setText(f"Your review was classified as {self.prediction} "
+                                 f"with probability {self.proba*100:1.2f}%.")
         self._view.show()
