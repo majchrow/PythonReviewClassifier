@@ -1,2 +1,5 @@
 PyQt5==5.12.*
 fastai>=1.0.5
+keras
+numpy
+tensorflow

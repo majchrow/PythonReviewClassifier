@@ -3,9 +3,10 @@
 import sys
 import Model.loader
 import View.view
-from Model.model import Classifier, LanguageModel
+from Model.model import Classifier, LanguageModel, Adapter, KerasAdapter, FastaiAdapter
 from View.view import StartWindow, MenuWindow, ChooseWindow, GenerateWindow, ClassifyWindow, MessageWindow
 from PyQt5.QtWidgets import QApplication
+import re
 
 
 class Start:
@@ -63,8 +64,8 @@ class TrainerController:
 
     def on_click_apply_clf(self):
         clf = self._view.combo_box_clf.currentText()
-        self._clf.clf = clf
-        self._view.current_clf.setText(self._clf.clf_name)
+        self._clf.clf = TrainerController.create_adapter(clf)
+        self._view.current_clf.setText(clf)
 
     def on_click_apply_lm(self):
         lm = self._view.combo_box_lm.currentText()
@@ -75,6 +76,15 @@ class TrainerController:
         self.dialog_back = MenuController()
         self._view.close()
         self.dialog_back.run()
+
+    @staticmethod
+    def create_adapter(name):
+        if re.search("^keras_*", name):
+            return KerasAdapter(name)
+        else:
+            return FastaiAdapter(name)
+
+
 
 
 class LanguageController:
@@ -134,5 +144,5 @@ class MessageController:
 
     def run(self):
         self._view.label.setText(f"Your review was classified as {self.prediction} "
-                                 f"with probability {self.proba*100:1.2f}%.")
+                                 f"with probability {self.proba * 100:1.2f}%.")
         self._view.show()
