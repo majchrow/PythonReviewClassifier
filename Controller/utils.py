@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 import Model.loader
 from Model.model import Classifier, LanguageModel
