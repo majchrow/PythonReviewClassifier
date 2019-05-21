@@ -103,11 +103,15 @@ class LanguageController:
         return LanguageModel().lm_name
 
     def on_click_generate(self):
-        n_words = int(self._view.n_words.text())
-        text = str(self._view.text_area.toPlainText())
-        gen_text = self._lm.predict(text, n_words)
-        self._view.text_area.clear()
-        self._view.text_area.insertPlainText(gen_text)
+        try:
+            n_words = int(self._view.n_words.text())
+            text = str(self._view.text_area.toPlainText())
+            gen_text = self._lm.predict(text, n_words)
+            self._view.text_area.clear()
+            self._view.text_area.insertPlainText(gen_text)
+        except ValueError:
+            self._view.text_area.clear()
+            self._view.text_area.insertPlainText("Specify the number of words first")
 
     def on_click_back(self):
         self._dialog_back = MenuController()
