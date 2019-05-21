@@ -135,10 +135,15 @@ class ClassifierController:
 
     def on_click_classify(self):
         review = str(self._view.text_area.toPlainText())
-        prediction, proba = self._clf.predict(review)
-        self._dialog_message.__setattr__("prediction", prediction)
-        self._dialog_message.__setattr__("proba", proba)
-        self._dialog_message.run()
+        try:
+            prediction, proba = self._clf.predict(review)
+            self._dialog_message.__setattr__("prediction", prediction)
+            self._dialog_message.__setattr__("proba", proba)
+            self._dialog_message.run()
+        except TypeError:
+            self._view.text_area.clear()
+            self._view.text_area.insertPlainText("Choose the model first")
+
 
     def on_click_back(self):
         self._dialog_back = MenuController()
