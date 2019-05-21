@@ -33,4 +33,4 @@ def load_clf(clf_name):
 
 def load_keras(clf_name):
     """Return the trained classifier"""
-    return load_model(filepath=PATH_CLF+clf_name)
+    return load_model(filepath=PATH_CLF + clf_name)
