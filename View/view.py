@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from PyQt5.QtGui import QPixmap, QFont
-from PyQt5.QtWidgets import QMainWindow, QLabel, QGridLayout, QLineEdit, QListWidget, QComboBox
-from PyQt5.QtWidgets import QWidget, QPushButton, QFrame, QVBoxLayout, QPlainTextEdit, QDesktopWidget
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QMainWindow, QLabel, QGridLayout, QLineEdit, QComboBox
+from PyQt5.QtWidgets import QWidget, QPushButton,  QPlainTextEdit, QDesktopWidget
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QIcon
 
