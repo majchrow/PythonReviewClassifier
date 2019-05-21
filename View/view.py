@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtWidgets import QMainWindow, QLabel, QGridLayout, QLineEdit, QComboBox
 from PyQt5.QtWidgets import QWidget, QPushButton,  QPlainTextEdit, QDesktopWidget
 from PyQt5.QtCore import QSize, Qt
@@ -33,15 +33,22 @@ class Window(QMainWindow):
 
     def add_combo_box(self, items, style):
         box = QComboBox(self)
+        box.setEditable(True)
+        box.lineEdit().setReadOnly(True)
+        box.lineEdit().setAlignment(Qt.AlignCenter)
         for i in items:
             box.addItem(i)
         box.setStyleSheet(style)
         return box
 
-    def add_label(self, color, text):
+    def add_label(self, color, text, **kwargs):
         label = QLabel(self)
         label.setText(text)
         label.setStyleSheet(color)
+        if "font_size" in kwargs.keys():
+            font = QFont()
+            font.setPointSize(kwargs["font_size"])
+            label.setFont(font)
         label.setAlignment(Qt.AlignCenter)
         return label
 
@@ -145,8 +152,8 @@ class ChooseWindow(Window):
         self.apply_lm_button = Window.add_button("Apply", "background-color: rgb(163, 226, 229)", controller.on_click_apply_lm)
         self.clf_title = Window.add_label(self, "background-color:rgb(141, 194, 210)", "CURRENT MODEL")
         self.lm_title = Window.add_label(self, "background-color:rgb(141, 194, 210)", "CURRENT MODEL")
-        self.classifiers = Window.add_label(self, "background-color:rgb(141, 194, 210)", "CLASSIFIERS")
-        self.lmodels = Window.add_label(self, "background-color:rgb(141, 194, 210)", "LANGUAGE MODELS")
+        self.classifiers = Window.add_label(self, "background-color:rgb(141, 194, 210)", "CLASSIFIERS", font_size=12)
+        self.lmodels = Window.add_label(self, "background-color:rgb(141, 194, 210)", "LANGUAGE MODELS", font_size=12)
         self.clf_image = Window.add_pix_map(self, IMAGES_LAYOUTS_PATH + 'decision-making.png')
         self.lm_image = Window.add_pix_map(self, IMAGES_LAYOUTS_PATH + 'discussion.png')
         self.init_ui()
@@ -178,7 +185,7 @@ class GenerateWindow(Window):
         Window.__init__(self, controller)
         self.setStyleSheet("background-color: rgb(141, 194, 210)")
         self.text_area = Window.add_text_area(self, "background-color: white",
-                                              "Write your text here, specify number of words and click \'Generate\'.\n")
+                                              "Write your text here, specify number of words and click \'Generate\'.")
 
         color = "background-color: rgb(163, 226, 229)"
         labels = ("Cenerate", "Get back")
@@ -231,7 +238,7 @@ class ClassifyWindow(Window):
         for i in range(2):
             self.buttons.append(Window.add_button(labels[i], color, connect_functions[i]))
 
-        self.text_area = Window.add_text_area(self, "background-color: white", "Write your review here.\n")
+        self.text_area = Window.add_text_area(self, "background-color: white", "Write your review here and click \'Classify\'.")
 
         self.current_model = Window.add_label(self, "background-color:white", controller.get_current_model())
 
