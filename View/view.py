@@ -45,9 +45,11 @@ class Window(QMainWindow):
         label.setAlignment(Qt.AlignCenter)
         return label
 
-    def add_pix_map(self, image):
+    def add_pix_map(self, image, *args):
         label = QLabel(self)
         pix_map = QPixmap(image)
+        if len(args) == 1:
+            pix_map.scaledToHeight(args[0])
         label.setPixmap(pix_map)
         label.resize(pix_map.width(), pix_map.height())
         return label
@@ -138,8 +140,8 @@ class ChooseWindow(Window):
         self.combo_box_lm = Window.add_combo_box(self, self.lm_list, "background-color:white")
         self.combo_box_clf = Window.add_combo_box(self, self.clf_list, "background-color:white")
         self.back_button = Window.add_button("Get back", "background-color: white", controller.on_click_back)
-        self.current_lm = Window.add_label(self, "background-color:white", "")
-        self.current_clf = Window.add_label(self, "background-color:white", "")
+        self.current_lm = Window.add_label(self, "background-color:white", controller.get_current_lm())
+        self.current_clf = Window.add_label(self, "background-color:white", controller.get_current_clf())
         self.apply_clf_button = Window.add_button("Apply", "background-color: white", controller.on_click_apply_clf)
         self.apply_lm_button = Window.add_button("Apply", "background-color: white", controller.on_click_apply_lm)
         self.clf_title = Window.add_label(self, "background-color:rgb(141, 194, 210)", "CURRENT CLASSIFIER")
@@ -152,12 +154,12 @@ class ChooseWindow(Window):
         central_widget = QWidget()
         grid_layout = Window.add_layout(self, 7, 10, 10, 10)
 
-        grid_layout.addWidget(self.classifiers, 0, 2)
-        grid_layout.addWidget(self.combo_box_clf, 1, 2)
-        grid_layout.addWidget(self.apply_clf_button, 2, 2)
-        grid_layout.addWidget(self.lmodels, 3, 2)
-        grid_layout.addWidget(self.combo_box_lm, 4, 2)
-        grid_layout.addWidget(self.apply_lm_button, 5, 2)
+        elements = (self.classifiers, self.combo_box_clf, self.apply_clf_button, self.lmodels,
+                    self.combo_box_lm, self.apply_lm_button)
+
+        for i, el in enumerate(elements):
+            grid_layout.addWidget(el, i, 2)
+
         grid_layout.addWidget(self.back_button, 7, 2)
         grid_layout.addWidget(self.clf_title, 1, 4)
         grid_layout.addWidget(self.current_clf, 2, 4)
@@ -172,7 +174,9 @@ class GenerateWindow(Window):
     def __init__(self, controller):
         Window.__init__(self, controller)
         self.setStyleSheet("background-color: rgb(141, 194, 210)")
-        self.text_area = Window.add_text_area(self, "background-color: white", "Write your text here. \nRemember to specify number of words to gnenerate.\n")
+        self.text_area = Window.add_text_area(self, "background-color: white",
+                                              "Write your text here. "
+                                              "\nRemember to specify number of words to gnenerate.\n")
 
         color = "background-color: white"
         labels = ("Cenerate", "Get back")
@@ -259,16 +263,19 @@ class MessageWindow(Window):
         self.setWindowTitle("Message")
         self.setStyleSheet("background-color: white")
         self.label = QLabel(self)
+        self.smile = Window.add_pix_map(self, IMAGES_ICON_PATH+'smile.png', 20)
+        self.sad = Window.add_pix_map(self, IMAGES_ICON_PATH+'sad.png')
+
         self._center()
         self.init_ui()
 
     def init_ui(self):
         central_widget = QWidget(self)
 
-        grid_layout = Window.add_layout(self, 3, 3, 3, 3)
-        central_widget.setLayout(grid_layout)
+        self.grid_layout = Window.add_layout(self, 3, 3, 3, 3)
+        central_widget.setLayout(self.grid_layout)
 
-        self.label.setFont(QFont("Arial", 12, QFont.Black))
-        grid_layout.addWidget(self.label, 1, 1)
+        #self.label.setFont(QFont("Times New Roman", 12, QFont.Black))
+        self.grid_layout.addWidget(self.label, 1, 1)
 
         self.setCentralWidget(central_widget)
