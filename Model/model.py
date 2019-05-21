@@ -68,4 +68,4 @@ class Classifier:
 
     def predict(self, review):
         if self.clf is not None:
-         return self.clf.predict(review)
+            return self.clf.predict(review)
