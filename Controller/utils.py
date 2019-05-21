@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import sys
 import Model.loader
 from Model.model import Classifier, LanguageModel
@@ -76,16 +74,30 @@ class TrainerController:
         self._view.close()
         self.dialog_back.run()
 
+    def get_current_lm(self):
+        if self._lm is not None:
+            return self._lm.lm_name
+        else:
+            return ""
+
+    def get_current_clf(self):
+        if self._clf is not None:
+            return self._clf.clf_name
+        else:
+            return ""
+
 
 class LanguageController:
     def __init__(self):
         self._lm = LanguageModel()
         self._view = GenerateWindow(self)
+        self._dialog_back = None
 
     def run(self):
         self._view.show()
 
-    def get_current_model(self):
+    @staticmethod
+    def get_current_model():
         return LanguageModel().lm_name
 
     def on_click_generate(self):
@@ -96,34 +108,36 @@ class LanguageController:
         self._view.text_area.insertPlainText(gen_text)
 
     def on_click_back(self):
-        self.dialog_back = MenuController()
+        self._dialog_back = MenuController()
         self._view.close()
-        self.dialog_back.run()
+        self._dialog_back.run()
 
 
 class ClassifierController:
     def __init__(self):
         self._view = ClassifyWindow(self)
         self._clf = Classifier()
-        self.dialog_message = MessageController()
+        self._dialog_message = MessageController()
+        self._dialog_back = None
 
     def run(self):
         self._view.show()
 
-    def get_current_model(self):
+    @staticmethod
+    def get_current_model():
         return Classifier().clf_name
 
     def on_click_classify(self):
         review = str(self._view.text_area.toPlainText())
         prediction, proba = self._clf.predict(review)
-        self.dialog_message.__setattr__("prediction", prediction)
-        self.dialog_message.__setattr__("proba", proba)
-        self.dialog_message.run()
+        self._dialog_message.__setattr__("prediction", prediction)
+        self._dialog_message.__setattr__("proba", proba)
+        self._dialog_message.run()
 
     def on_click_back(self):
-        self.dialog_back = MenuController()
+        self._dialog_back = MenuController()
         self._view.close()
-        self.dialog_back.run()
+        self._dialog_back.run()
 
 
 class MessageController:
@@ -133,6 +147,12 @@ class MessageController:
         self.proba = 0.0
 
     def run(self):
-        self._view.label.setText(f"Your review was classified as {self.prediction} "
-                                 f"with probability {self.proba * 100:1.2f}%.")
+        self._view.label.setText(f"Your review was classified as "
+                                 f"{self.prediction.upper()} with probability {self.proba * 100:1.2f}%.")
+
+        if self.prediction is "positive":
+            self._view.grid_layout.addWidget(self._view.smile, 2, 2)
+        else:
+            self._view.grid_layout.addWidget(self._view.sad, 2, 2)
+
         self._view.show()

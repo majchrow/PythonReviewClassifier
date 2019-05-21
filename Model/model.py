@@ -63,12 +63,9 @@ class Classifier:
 
     @clf.setter
     def clf(self, adapter):
-        # if name in get_clf():
         self._clf = adapter
         self._clf_name = adapter.name
 
-    # self._clf_name = name
-
     def predict(self, review):
         if self.clf is not None:
-            return self.clf.predict(review)
+         return self.clf.predict(review)

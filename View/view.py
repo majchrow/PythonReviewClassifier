@@ -45,13 +45,12 @@ class Window(QMainWindow):
         label.setAlignment(Qt.AlignCenter)
         return label
 
-    def add_pix_map(self, image, *args):
+    def add_pix_map(self, image):
         label = QLabel(self)
         pix_map = QPixmap(image)
-        if len(args) == 1:
-            pix_map.scaledToHeight(args[0])
         label.setPixmap(pix_map)
         label.resize(pix_map.width(), pix_map.height())
+        label.setAlignment(Qt.AlignCenter)
         return label
 
     def add_text_line(self, color, text):
@@ -139,32 +138,36 @@ class ChooseWindow(Window):
         self.clf_list = self.controller.get_cm()
         self.combo_box_lm = Window.add_combo_box(self, self.lm_list, "background-color:white")
         self.combo_box_clf = Window.add_combo_box(self, self.clf_list, "background-color:white")
-        self.back_button = Window.add_button("Get back", "background-color: white", controller.on_click_back)
+        self.back_button = Window.add_button("Get back", "background-color: rgb(163, 226, 229)", controller.on_click_back)
         self.current_lm = Window.add_label(self, "background-color:white", controller.get_current_lm())
         self.current_clf = Window.add_label(self, "background-color:white", controller.get_current_clf())
-        self.apply_clf_button = Window.add_button("Apply", "background-color: white", controller.on_click_apply_clf)
-        self.apply_lm_button = Window.add_button("Apply", "background-color: white", controller.on_click_apply_lm)
-        self.clf_title = Window.add_label(self, "background-color:rgb(141, 194, 210)", "CURRENT CLASSIFIER")
-        self.lm_title = Window.add_label(self, "background-color:rgb(141, 194, 210)", "CURRENT LANGUAGE MODEL")
+        self.apply_clf_button = Window.add_button("Apply", "background-color: rgb(163, 226, 229)", controller.on_click_apply_clf)
+        self.apply_lm_button = Window.add_button("Apply", "background-color: rgb(163, 226, 229)", controller.on_click_apply_lm)
+        self.clf_title = Window.add_label(self, "background-color:rgb(141, 194, 210)", "CURRENT MODEL")
+        self.lm_title = Window.add_label(self, "background-color:rgb(141, 194, 210)", "CURRENT MODEL")
         self.classifiers = Window.add_label(self, "background-color:rgb(141, 194, 210)", "CLASSIFIERS")
         self.lmodels = Window.add_label(self, "background-color:rgb(141, 194, 210)", "LANGUAGE MODELS")
+        self.clf_image = Window.add_pix_map(self, IMAGES_LAYOUTS_PATH + 'decision-making.png')
+        self.lm_image = Window.add_pix_map(self, IMAGES_LAYOUTS_PATH + 'discussion.png')
         self.init_ui()
 
     def init_ui(self):
         central_widget = QWidget()
-        grid_layout = Window.add_layout(self, 7, 10, 10, 10)
+        grid_layout = Window.add_layout(self, 5, 10, 10, 10)
 
-        elements = (self.classifiers, self.combo_box_clf, self.apply_clf_button, self.lmodels,
-                    self.combo_box_lm, self.apply_lm_button)
+        clf_elements = (self.classifiers, self.combo_box_clf, self.apply_clf_button, self.clf_title, self.current_clf)
+        lm_elements = (self.lmodels, self.combo_box_lm, self.apply_lm_button, self.lm_title, self.current_lm)
 
-        for i, el in enumerate(elements):
-            grid_layout.addWidget(el, i, 2)
+        for i, el in enumerate(clf_elements):
+            grid_layout.addWidget(el, i, 1)
 
-        grid_layout.addWidget(self.back_button, 7, 2)
-        grid_layout.addWidget(self.clf_title, 1, 4)
-        grid_layout.addWidget(self.current_clf, 2, 4)
-        grid_layout.addWidget(self.lm_title, 4, 4)
-        grid_layout.addWidget(self.current_lm, 5, 4)
+        for i, el in enumerate(lm_elements):
+            grid_layout.addWidget(el, i, 3)
+
+        grid_layout.addWidget(self.clf_image, 6, 1)
+        grid_layout.addWidget(self.lm_image, 6, 3)
+
+        grid_layout.addWidget(self.back_button, 9, 3)
 
         central_widget.setLayout(grid_layout)
         self.setCentralWidget(central_widget)
@@ -175,10 +178,9 @@ class GenerateWindow(Window):
         Window.__init__(self, controller)
         self.setStyleSheet("background-color: rgb(141, 194, 210)")
         self.text_area = Window.add_text_area(self, "background-color: white",
-                                              "Write your text here. "
-                                              "\nRemember to specify number of words to gnenerate.\n")
+                                              "Write your text here, specify number of words and click \'Generate\'.\n")
 
-        color = "background-color: white"
+        color = "background-color: rgb(163, 226, 229)"
         labels = ("Cenerate", "Get back")
         connect_functions = (controller.on_click_generate, controller.on_click_back)
 
@@ -190,6 +192,7 @@ class GenerateWindow(Window):
         self.words = Window.add_label(self, "background-color:rgb(141, 194, 210)", "NUMBER OF WORDS")
         self.n_words = Window.add_text_line(self, "background-color:white", "")
         self.model_title = Window.add_label(self, "background-color: rgb(141, 194, 210)", "CURRENT LANGUAGE MODEL")
+        self.lm_image = Window.add_pix_map(self, IMAGES_LAYOUTS_PATH + 'discussion.png')
         self.init_ui()
 
     def init_ui(self):
@@ -199,13 +202,14 @@ class GenerateWindow(Window):
         grid_layout.addWidget(self.text_area, 0, 0, 2, 2)
         additional_layout = Window.add_layout(self, 3, 10, 3, 3)
 
-        for i in range(2):
-            additional_layout.addWidget(self.buttons[i], i, 1)
+        additional_layout.addWidget(self.lm_image, 0, 1)
 
-        additional_layout.addWidget(self.model_title, 3, 1)
-        additional_layout.addWidget(self.current_model, 4, 1)
-        additional_layout.addWidget(self.words, 5, 1)
-        additional_layout.addWidget(self.n_words, 6, 1)
+        additional_layout.addWidget(self.words, 1, 1)
+        additional_layout.addWidget(self.n_words, 2, 1)
+        additional_layout.addWidget(self.model_title, 5, 1)
+        additional_layout.addWidget(self.current_model, 6, 1)
+        additional_layout.addWidget(self.buttons[0], 3, 1)
+        additional_layout.addWidget(self.buttons[1], 8, 1)
 
         grid_layout.addLayout(additional_layout, 0, 2)
 
@@ -219,7 +223,7 @@ class ClassifyWindow(Window):
         Window.__init__(self, controller)
         self.setStyleSheet("background-color: rgb(141, 194, 210)")
 
-        color = "background-color: white"
+        color = "background-color: rgb(163, 226, 229)"
         labels = ("Classify", "Get back")
         connect_functions = (controller.on_click_classify, controller.on_click_back)
 
@@ -233,6 +237,8 @@ class ClassifyWindow(Window):
 
         self.model_title = Window.add_label(self, "background-color: rgb(141, 194, 210)", "CURRENT CLASSIFIER")
 
+        self.clf_image = Window.add_pix_map(self, IMAGES_LAYOUTS_PATH + 'decision-making.png')
+
         self.init_ui()
 
     def init_ui(self):
@@ -242,11 +248,13 @@ class ClassifyWindow(Window):
         grid_layout.addWidget(self.text_area, 0, 0, 2, 2)
         additional_layout = Window.add_layout(self, 3, 10, 3, 3)
 
-        for i in range(2):
-            additional_layout.addWidget(self.buttons[i], i, 1)
+        additional_layout.addWidget(self.clf_image, 0, 1)
+        additional_layout.addWidget(self.buttons[0], 2, 1)
 
-        additional_layout.addWidget(self.model_title, 3, 1)
-        additional_layout.addWidget(self.current_model, 4, 1)
+        additional_layout.addWidget(self.model_title, 4, 1)
+        additional_layout.addWidget(self.current_model, 5, 1)
+
+        additional_layout.addWidget(self.buttons[1], 9, 1)
 
         grid_layout.addLayout(additional_layout, 0, 2)
 
@@ -263,8 +271,9 @@ class MessageWindow(Window):
         self.setWindowTitle("Message")
         self.setStyleSheet("background-color: white")
         self.label = QLabel(self)
-        self.smile = Window.add_pix_map(self, IMAGES_ICON_PATH+'smile.png', 20)
-        self.sad = Window.add_pix_map(self, IMAGES_ICON_PATH+'sad.png')
+        self.smile = Window.add_pix_map(self, IMAGES_ICON_PATH + 'smile.png')
+        self.sad = Window.add_pix_map(self, IMAGES_ICON_PATH + 'sad.png')
+        self.grid_layout = Window.add_layout(self, 3, 3, 3, 3)
 
         self._center()
         self.init_ui()
@@ -272,10 +281,8 @@ class MessageWindow(Window):
     def init_ui(self):
         central_widget = QWidget(self)
 
-        self.grid_layout = Window.add_layout(self, 3, 3, 3, 3)
         central_widget.setLayout(self.grid_layout)
 
-        #self.label.setFont(QFont("Times New Roman", 12, QFont.Black))
         self.grid_layout.addWidget(self.label, 1, 1)
 
         self.setCentralWidget(central_widget)
