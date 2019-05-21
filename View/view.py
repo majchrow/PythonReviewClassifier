@@ -21,7 +21,7 @@ class Window(QMainWindow):
         self.setWindowIcon(QIcon(IMAGES_ICON_PATH + 'window_icon.png'))
 
     def add_layout(self, columns, rows, c_stretch, r_stretch):
-        layout = QGridLayout(self)
+        layout = QGridLayout()
 
         for i in range(rows):
             layout.setRowStretch(i, r_stretch)
@@ -94,7 +94,7 @@ class StartWindow(Window):
         self.init_ui()
 
     def init_ui(self):
-        grid_layout = QGridLayout(self)
+        grid_layout = QGridLayout()
         central_widget = QWidget(self)
         central_widget.setLayout(grid_layout)
 
