@@ -150,7 +150,7 @@ class MessageController:
         self._view.label.setText(f"Your review was classified as "
                                  f"{self.prediction.upper()} with probability {self.proba * 100:1.2f}%.")
 
-        if self.prediction is "positive":
+        if self.prediction == "positive":
             self._view.grid_layout.addWidget(self._view.smile, 2, 2)
         else:
             self._view.grid_layout.addWidget(self._view.sad, 2, 2)
