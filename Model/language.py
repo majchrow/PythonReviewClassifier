@@ -31,6 +31,9 @@ class LanguageModel:
         if name in get_all_lm():
             self._lm = load_fastai_lm(name)
             self.name = name
+        else:
+            logging.warning('Trying to set model which does not exists')
+            raise ValueError(f'There is no `{name}` in `models/language/`')
 
     def predict(self, text, n_words):
         """Return text with n_words that come after text"""
