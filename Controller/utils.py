@@ -2,7 +2,8 @@
 
 import sys
 import Model.loader
-from Model.model import Classifier, LanguageModel
+from Model.classifier import Classifier
+from Model.language import LanguageModel
 from View.view import StartWindow, MenuWindow, ChooseWindow, GenerateWindow, ClassifyWindow, MessageWindow
 from PyQt5.QtWidgets import QApplication
 from Model.adapters import create_adapter
