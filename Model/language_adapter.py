@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from Model.loader import get_lm
-from Model.loader import load_lm
+from Model.loader import get_all_lm
+from Model.loader import load_fastai_lm
 from abc import abstractmethod, ABCMeta
 
 INDEX_FROM = 3
@@ -9,6 +9,7 @@ MAX_WORDS = 500
 
 
 class LanguageAdapter(metaclass=ABCMeta):
+    """Base adapter for language model to enable using models trained in different frameworks"""
     def __init__(self):
         self._lm = None
         self._name = None
@@ -37,6 +38,7 @@ class LanguageAdapter(metaclass=ABCMeta):
 
 
 class FastaiAdapter(LanguageAdapter):
+    """Concrete language model trained in keras framework"""
     def __init__(self, name):
         super().__init__()
         self._lm = name
@@ -47,8 +49,8 @@ class FastaiAdapter(LanguageAdapter):
 
     @lm.setter
     def lm(self, name):
-        if name in get_lm():
-            self._lm = load_lm(name)
+        if name in get_all_lm():
+            self._lm = load_fastai_lm(name)
 
     def predict(self, text, n_words):
         """Return text with n_words that come after text"""

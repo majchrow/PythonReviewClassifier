@@ -57,10 +57,10 @@ class TrainerController:
         self._view.show()
 
     def get_lm(self):
-        return Model.loader.get_lm()
+        return Model.loader.get_all_lm()
 
     def get_cm(self):
-        return Model.loader.get_clf()
+        return Model.loader.get_add_clf()
 
     def on_click_apply_clf(self):
         clf = self._view.combo_box_clf.currentText()
@@ -85,7 +85,7 @@ class TrainerController:
 
     def get_current_clf(self):
         if self._clf is not None:
-            return self._clf.clf_name
+            return self._clf.name
         else:
             return ""
 
@@ -132,7 +132,7 @@ class ClassifierController:
 
     @staticmethod
     def get_current_model():
-        return Classifier().clf_name
+        return Classifier().name
 
     def on_click_classify(self):
         review = str(self._view.text_area.toPlainText())
@@ -144,7 +144,6 @@ class ClassifierController:
         except TypeError:
             self._view.text_area.clear()
             self._view.text_area.insertPlainText("Choose the model first")
-
 
     def on_click_back(self):
         self._dialog_back = MenuController()

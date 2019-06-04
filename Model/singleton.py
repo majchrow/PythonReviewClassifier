@@ -4,6 +4,7 @@ from functools import wraps
 
 
 def singleton(class_):
+    """Singleton wrapper to enable having only one instance of chosen class"""
     instances = {}
 
     @wraps(class_)

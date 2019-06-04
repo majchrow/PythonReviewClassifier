@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from Model.loader import get_lm
-from Model.loader import load_lm
+from Model.loader import get_all_lm
+from Model.loader import load_fastai_lm
 from Model.singleton import singleton
 
 
@@ -27,8 +27,8 @@ class LanguageModel:
 
     @lm.setter
     def lm(self, name):
-        if name in get_lm():
-            self._lm = load_lm(name)
+        if name in get_all_lm():
+            self._lm = load_fastai_lm(name)
             self.name = name
 
     def predict(self, text, n_words):

@@ -5,13 +5,19 @@ from abc import abstractmethod, ABCMeta
 from keras.datasets import imdb
 from keras.preprocessing import sequence
 from keras.preprocessing.text import text_to_word_sequence
-from Model.loader import load_clf, load_keras
+from Model.loader import load_fastai_clf, load_keras_clf
 
-INDEX_FROM = 3
-MAX_WORDS = 500
+
+def create_adapter(name):
+    """Function to create concrete adapters based on the model name"""
+    if "keras" in name:
+        return KerasClassifierAdapter(name)
+    else:
+        return FastaiClassifierAdapter(name)
 
 
 class ClassifierAdapter(metaclass=ABCMeta):
+    """Base adapter for classifier to enable using classifiers trained in different frameworks"""
     def __init__(self):
         self._clf = None
         self._name = None
@@ -40,12 +46,16 @@ class ClassifierAdapter(metaclass=ABCMeta):
 
 
 class KerasClassifierAdapter(ClassifierAdapter):
+    """Concrete classifier trained in keras framework"""
+    INDEX_FROM = 3
+    MAX_WORDS = 500
+
     def __init__(self, name):
         super().__init__()
-        self._clf = load_keras(name)
+        self._clf = load_keras_clf(name)
         self._name = name
         word_index = imdb.get_word_index()
-        self.word_to_id = {w: (i + INDEX_FROM) for w, i in word_index.items()}
+        self.word_to_id = {w: (i + KerasClassifierAdapter.INDEX_FROM) for w, i in word_index.items()}
 
     @property
     def clf(self):
@@ -53,9 +63,10 @@ class KerasClassifierAdapter(ClassifierAdapter):
 
     @clf.setter
     def clf(self, name):
-        self._clf = load_keras(name)
+        self._clf = load_keras_clf(name)
 
     def predict(self, review):
+        """Return predicted class and probability (>=0.5)"""
         ppreview = self.prepare_review_to_prediction(review)
         proba = self.clf.predict(ppreview)[0][0]
         return ("positive", proba) if proba > 0.5 else ("negative", 1 - proba)
@@ -74,13 +85,14 @@ class KerasClassifierAdapter(ClassifierAdapter):
 
     @staticmethod
     def padding(array):
-        return sequence.pad_sequences(np.array(array), maxlen=MAX_WORDS)
+        return sequence.pad_sequences(np.array(array), maxlen=KerasClassifierAdapter.MAX_WORDS)
 
 
 class FastaiClassifierAdapter(ClassifierAdapter):
+    """Concrete classifier trained in fastai framework"""
     def __init__(self, name):
         super().__init__()
-        self._clf = load_clf(name)
+        self._clf = load_fastai_clf(name)
         self._name = name
 
     @property
@@ -89,17 +101,10 @@ class FastaiClassifierAdapter(ClassifierAdapter):
 
     @clf.setter
     def clf(self, name):
-        self._clf = load_clf(name)
+        self._clf = load_fastai_clf(name)
 
     def predict(self, review):
         """Return predicted class and probability (>=0.5)"""
         prediction = self.clf.predict(review)
         proba = prediction[2][1].data.cpu().numpy().round(3)  # cast torch tensor to numpy float value
         return ("positive", proba) if proba > 0.5 else ("negative", 1 - proba)
-
-
-def create_adapter(name):
-    if "keras" in name:
-        return KerasClassifierAdapter(name)
-    else:
-        return FastaiClassifierAdapter(name)
