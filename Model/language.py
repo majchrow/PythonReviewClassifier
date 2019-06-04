@@ -11,23 +11,27 @@ class LanguageModel:
 
     def __init__(self):
         self._lm = None
-        self._lm_name = ""
+        self._name = None
 
     @property
     def lm(self):
         return self._lm
 
     @property
-    def lm_name(self):
-        return self._lm_name
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, name):
+        self._name = name
 
     @lm.setter
     def lm(self, name):
         if name in get_lm():
             self._lm = load_lm(name)
-            self._lm_name = name
+            self.name = name
 
-    def predict(self, text, n_words=50, temperature=0.75):
+    def predict(self, text, n_words):
         """Return text with n_words that come after text"""
         if self.lm is not None:
-            return self.lm.predict(text=text, n_words=n_words, temperature=temperature)
+            return self.lm.predict(text=text, n_words=n_words)

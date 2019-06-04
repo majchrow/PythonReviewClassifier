@@ -6,7 +6,7 @@ from Model.classifier import Classifier
 from Model.language import LanguageModel
 from View.view import StartWindow, MenuWindow, ChooseWindow, GenerateWindow, ClassifyWindow, MessageWindow
 from PyQt5.QtWidgets import QApplication
-from Model.adapters import create_adapter
+from Model.classifier_adapter import create_adapter
 
 
 class Start:
@@ -70,7 +70,7 @@ class TrainerController:
     def on_click_apply_lm(self):
         lm = self._view.combo_box_lm.currentText()
         self._lm.lm = lm
-        self._view.current_lm.setText(self._lm.lm_name)
+        self._view.current_lm.setText(self._lm.name)
 
     def on_click_back(self):
         self.dialog_back = MenuController()
@@ -79,7 +79,7 @@ class TrainerController:
 
     def get_current_lm(self):
         if self._lm is not None:
-            return self._lm.lm_name
+            return self._lm.name
         else:
             return ""
 
@@ -101,7 +101,7 @@ class LanguageController:
 
     @staticmethod
     def get_current_model():
-        return LanguageModel().lm_name
+        return LanguageModel().name
 
     def on_click_generate(self):
         try:

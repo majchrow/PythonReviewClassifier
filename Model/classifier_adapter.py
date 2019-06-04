@@ -11,7 +11,7 @@ INDEX_FROM = 3
 MAX_WORDS = 500
 
 
-class Adapter(metaclass=ABCMeta):
+class ClassifierAdapter(metaclass=ABCMeta):
     def __init__(self):
         self._clf = None
         self._name = None
@@ -39,7 +39,7 @@ class Adapter(metaclass=ABCMeta):
         ...
 
 
-class KerasAdapter(Adapter):
+class KerasClassifierAdapter(ClassifierAdapter):
     def __init__(self, name):
         super().__init__()
         self._clf = load_keras(name)
@@ -77,7 +77,7 @@ class KerasAdapter(Adapter):
         return sequence.pad_sequences(np.array(array), maxlen=MAX_WORDS)
 
 
-class FastaiAdapter(Adapter):
+class FastaiClassifierAdapter(ClassifierAdapter):
     def __init__(self, name):
         super().__init__()
         self._clf = load_clf(name)
@@ -100,6 +100,6 @@ class FastaiAdapter(Adapter):
 
 def create_adapter(name):
     if "keras" in name:
-        return KerasAdapter(name)
+        return KerasClassifierAdapter(name)
     else:
-        return FastaiAdapter(name)
+        return FastaiClassifierAdapter(name)
