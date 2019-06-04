@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 
 import sys
-import Model.loader
+import logging
+import Model.loader as loader
 from Model.classifier import Classifier
+from Model.classifier_adapter import create_adapter
 from Model.language import LanguageModel
 from View.view import StartWindow, MenuWindow, ChooseWindow, GenerateWindow, ClassifyWindow, MessageWindow
 from PyQt5.QtWidgets import QApplication
-from Model.classifier_adapter import create_adapter
 
 
 class Start:
+    """Starting window controller"""
     def __init__(self):
+        logging.info("Initializing starting window controller")
         self._app = QApplication(sys.argv)
         self._view = StartWindow(self)
         self.dialog = MenuController()
@@ -25,9 +28,11 @@ class Start:
 
 
 class MenuController:
+    """Choosing menu window controller"""
     def __init__(self):
+        logging.info("Initializing choosing menu controller")
         self._view = MenuWindow(self)
-        self.dialog_trainer = TrainerController()
+        self.dialog_trainer = ModelSelectorController()
         self.dialog_language = LanguageController()
         self.dialog_classifier = ClassifierController()
 
@@ -47,8 +52,10 @@ class MenuController:
         self.dialog_classifier.run()
 
 
-class TrainerController:
+class ModelSelectorController:
+    """Model selector window controller"""
     def __init__(self):
+        logging.info("Initializing model selector controller")
         self._lm = LanguageModel()
         self._clf = Classifier()
         self._view = ChooseWindow(self)
@@ -56,11 +63,13 @@ class TrainerController:
     def run(self):
         self._view.show()
 
-    def get_lm(self):
-        return Model.loader.get_all_lm()
+    @staticmethod
+    def get_all_lm():
+        return loader.get_all_lm()
 
-    def get_cm(self):
-        return Model.loader.get_add_clf()
+    @staticmethod
+    def get_all_clf():
+        return loader.get_all_clf()
 
     def on_click_apply_clf(self):
         clf = self._view.combo_box_clf.currentText()
@@ -91,7 +100,9 @@ class TrainerController:
 
 
 class LanguageController:
+    """Text generator window controller"""
     def __init__(self):
+        logging.info("Initializing text generator controller")
         self._lm = LanguageModel()
         self._view = GenerateWindow(self)
         self._dialog_back = None
@@ -111,8 +122,13 @@ class LanguageController:
             self._view.text_area.clear()
             self._view.text_area.insertPlainText(gen_text)
         except ValueError:
+            logging.warning("Number of words not specified")
             self._view.text_area.clear()
             self._view.text_area.insertPlainText("Specify the number of words first")
+        except TypeError:
+            logging.warning("Language model not selected")
+            self._view.text_area.clear()
+            self._view.text_area.insertPlainText("Choose the language model first")
 
     def on_click_back(self):
         self._dialog_back = MenuController()
@@ -121,7 +137,9 @@ class LanguageController:
 
 
 class ClassifierController:
+    """Review classifier window controller"""
     def __init__(self):
+        logging.info("Initializing review classifier controller")
         self._view = ClassifyWindow(self)
         self._clf = Classifier()
         self._dialog_message = MessageController()
@@ -142,8 +160,9 @@ class ClassifierController:
             self._dialog_message.__setattr__("proba", proba)
             self._dialog_message.run()
         except TypeError:
+            logging.warning("Classifier not selected")
             self._view.text_area.clear()
-            self._view.text_area.insertPlainText("Choose the model first")
+            self._view.text_area.insertPlainText("Choose the classifier first")
 
     def on_click_back(self):
         self._dialog_back = MenuController()
@@ -152,7 +171,9 @@ class ClassifierController:
 
 
 class MessageController:
+    """Prediction message alerts controller"""
     def __init__(self):
+        logging.info("Initializing message alerts controller")
         self._view = MessageWindow(self)
         self.prediction = ""
         self.proba = 0.0

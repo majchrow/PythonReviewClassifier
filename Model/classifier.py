@@ -37,4 +37,4 @@ class Classifier:
             return self.clf.predict(review)
         else:
             logging.warning('Trying to predict review without selected classifier')
-            raise Exception('`classifier` was not selected')
+            raise TypeError('`classifier` was not selected')

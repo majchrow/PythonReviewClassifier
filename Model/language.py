@@ -39,4 +39,4 @@ class LanguageModel:
             return self.lm.predict(text=text, n_words=n_words)
         else:
             logging.warning('Trying to generate text without selected language model')
-            raise Exception('`language model` was not selected')
+            raise TypeError('`language model` was not selected')

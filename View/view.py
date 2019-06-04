@@ -141,8 +141,8 @@ class ChooseWindow(Window):
     def __init__(self, controller):
         Window.__init__(self, controller)
         self.setStyleSheet("background-color: rgb(141, 194, 210)")
-        self.lm_list = self.controller.get_lm()
-        self.clf_list = self.controller.get_cm()
+        self.lm_list = self.controller.get_all_lm()
+        self.clf_list = self.controller.get_all_clf()
         self.combo_box_lm = Window.add_combo_box(self, self.lm_list, "background-color:white")
         self.combo_box_clf = Window.add_combo_box(self, self.clf_list, "background-color:white")
         self.back_button = Window.add_button("Get back", "background-color: rgb(163, 226, 229)", controller.on_click_back)

@@ -18,7 +18,7 @@ def get_all_lm():
     return [model_name for model_name in listdir(PATH_LM) if 'lm' in model_name]
 
 
-def get_add_clf():
+def get_all_clf():
     """Return an array of all trained classifiers"""
     logging.info(f'listing {PATH_CLF} directory')
     return [model_name for model_name in listdir(PATH_CLF) if 'clf' in model_name]
