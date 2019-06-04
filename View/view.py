@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QMainWindow, QLabel, QGridLayout, QLineEdit, QComboB
 from PyQt5.QtWidgets import QWidget, QPushButton,  QPlainTextEdit, QDesktopWidget
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QIcon
+import logging
 
 IMAGES_LAYOUTS_PATH = 'images/layouts/'
 IMAGES_ICON_PATH = 'images/icons/'
@@ -20,7 +21,8 @@ class Window(QMainWindow):
         self._center()
         self.setWindowIcon(QIcon(IMAGES_ICON_PATH + 'window_icon.png'))
 
-    def add_layout(self, columns, rows, c_stretch, r_stretch):
+    @staticmethod
+    def add_layout(columns, rows, c_stretch, r_stretch):
         layout = QGridLayout()
 
         for i in range(rows):
@@ -87,7 +89,9 @@ class Window(QMainWindow):
 
 
 class StartWindow(Window):
+    """Staring window"""
     def __init__(self, controller):
+        logging.info("Initializing starting window")
         Window.__init__(self, controller)
         self.setStyleSheet("background-color: black")
         self.start_button = Window.add_button('START', "background-color: white", controller.on_click_start)
@@ -98,7 +102,7 @@ class StartWindow(Window):
         central_widget = QWidget(self)
         central_widget.setLayout(grid_layout)
 
-        additional_layout = Window.add_layout(self, 5, 5, 5, 5)
+        additional_layout = Window.add_layout(5, 5, 5, 5)
 
         label = Window.add_pix_map(self, IMAGES_LAYOUTS_PATH + 'main.jpg')
 
@@ -111,20 +115,20 @@ class StartWindow(Window):
 
 
 class MenuWindow(Window):
+    """Menu window"""
     def __init__(self, controller):
+        logging.info("Initializing menu window")
         Window.__init__(self, controller)
         self.setStyleSheet("background-color: white")
         color = "background-color: rgb(141, 194, 210)"
-        labels = ('Choose model', 'Classify your review', 'Generate text')
+        labels = ('Choose models', 'Classify your review', 'Generate text')
         connect_functions = (controller.on_click_choose, controller.on_click_classify, controller.on_click_generate)
-        self.buttons = []
-        for i in range(3):
-            self.buttons.append(Window.add_button(labels[i], color, connect_functions[i]))
+        self.buttons = [Window.add_button(labels[i], color, connect_functions[i]) for i in range(3)]
         self.init_ui()
 
     def init_ui(self):
         central_widget = QWidget()
-        grid_layout = Window.add_layout(self, 5, 5, 5, 5)
+        grid_layout = Window.add_layout(5, 5, 5, 5)
 
         images = ('network.jpeg', 'film.jpg', 'text.png')
 
@@ -138,29 +142,41 @@ class MenuWindow(Window):
 
 
 class ChooseWindow(Window):
+    """Model selector window"""
     def __init__(self, controller):
+        logging.info("Initializing model selector window")
         Window.__init__(self, controller)
         self.setStyleSheet("background-color: rgb(141, 194, 210)")
+
         self.lm_list = self.controller.get_all_lm()
         self.clf_list = self.controller.get_all_clf()
+
         self.combo_box_lm = Window.add_combo_box(self, self.lm_list, "background-color:white")
         self.combo_box_clf = Window.add_combo_box(self, self.clf_list, "background-color:white")
-        self.back_button = Window.add_button("Get back", "background-color: rgb(163, 226, 229)", controller.on_click_back)
+
         self.current_lm = Window.add_label(self, "background-color:white", controller.get_current_lm())
         self.current_clf = Window.add_label(self, "background-color:white", controller.get_current_clf())
-        self.apply_clf_button = Window.add_button("Apply", "background-color: rgb(163, 226, 229)", controller.on_click_apply_clf)
-        self.apply_lm_button = Window.add_button("Apply", "background-color: rgb(163, 226, 229)", controller.on_click_apply_lm)
+
+        self.back_button = Window.add_button("Get back", "background-color: rgb(163, 226, 229)", controller.on_click_back)
+        self.apply_clf_button = Window.add_button("Apply", "background-color: rgb(163, 226, 229)",
+                                                  controller.on_click_apply_clf)
+        self.apply_lm_button = Window.add_button("Apply", "background-color: rgb(163, 226, 229)",
+                                                 controller.on_click_apply_lm)
+
         self.clf_title = Window.add_label(self, "background-color:rgb(141, 194, 210)", "CURRENT MODEL")
         self.lm_title = Window.add_label(self, "background-color:rgb(141, 194, 210)", "CURRENT MODEL")
+
         self.classifiers = Window.add_label(self, "background-color:rgb(141, 194, 210)", "CLASSIFIERS", font_size=12)
         self.lmodels = Window.add_label(self, "background-color:rgb(141, 194, 210)", "LANGUAGE MODELS", font_size=12)
+
         self.clf_image = Window.add_pix_map(self, IMAGES_LAYOUTS_PATH + 'decision-making.png')
         self.lm_image = Window.add_pix_map(self, IMAGES_LAYOUTS_PATH + 'discussion.png')
+
         self.init_ui()
 
     def init_ui(self):
         central_widget = QWidget()
-        grid_layout = Window.add_layout(self, 5, 10, 10, 10)
+        grid_layout = Window.add_layout(5, 10, 10, 10)
 
         clf_elements = (self.classifiers, self.combo_box_clf, self.apply_clf_button, self.clf_title, self.current_clf)
         lm_elements = (self.lmodels, self.combo_box_lm, self.apply_lm_button, self.lm_title, self.current_lm)
@@ -181,7 +197,9 @@ class ChooseWindow(Window):
 
 
 class GenerateWindow(Window):
+    """Text generator window"""
     def __init__(self, controller):
+        logging.info("Initializing text generator window")
         Window.__init__(self, controller)
         self.setStyleSheet("background-color: rgb(141, 194, 210)")
         self.text_area = Window.add_text_area(self, "background-color: white",
@@ -191,23 +209,22 @@ class GenerateWindow(Window):
         labels = ("Cenerate", "Get back")
         connect_functions = (controller.on_click_generate, controller.on_click_back)
 
-        self.buttons = []
-        for i in range(2):
-            self.buttons.append(Window.add_button(labels[i], color, connect_functions[i]))
+        self.buttons = [Window.add_button(labels[i], color, connect_functions[i]) for i in range(2)]
 
         self.current_model = Window.add_label(self, "background-color:white", controller.get_current_model())
         self.words = Window.add_label(self, "background-color:rgb(141, 194, 210)", "NUMBER OF WORDS")
         self.n_words = Window.add_text_line(self, "background-color:white", "")
         self.model_title = Window.add_label(self, "background-color: rgb(141, 194, 210)", "CURRENT LANGUAGE MODEL")
         self.lm_image = Window.add_pix_map(self, IMAGES_LAYOUTS_PATH + 'discussion.png')
+
         self.init_ui()
 
     def init_ui(self):
         central_widget = QWidget()
-        grid_layout = Window.add_layout(self, 3, 1, 5, 5)
+        grid_layout = Window.add_layout(3, 1, 5, 5)
 
         grid_layout.addWidget(self.text_area, 0, 0, 2, 2)
-        additional_layout = Window.add_layout(self, 3, 10, 3, 3)
+        additional_layout = Window.add_layout(3, 10, 3, 3)
 
         additional_layout.addWidget(self.lm_image, 0, 1)
 
@@ -226,7 +243,9 @@ class GenerateWindow(Window):
 
 
 class ClassifyWindow(Window):
+    """Review classifier window"""
     def __init__(self, controller):
+        logging.info("Initializing review classifier window")
         Window.__init__(self, controller)
         self.setStyleSheet("background-color: rgb(141, 194, 210)")
 
@@ -234,11 +253,10 @@ class ClassifyWindow(Window):
         labels = ("Classify", "Get back")
         connect_functions = (controller.on_click_classify, controller.on_click_back)
 
-        self.buttons = []
-        for i in range(2):
-            self.buttons.append(Window.add_button(labels[i], color, connect_functions[i]))
+        self.buttons = [Window.add_button(labels[i], color, connect_functions[i]) for i in range(2)]
 
-        self.text_area = Window.add_text_area(self, "background-color: white", "Write your review here and click \'Classify\'.")
+        self.text_area = Window.add_text_area(self, "background-color: white",
+                                              "Write your review here and click \'Classify\'.")
 
         self.current_model = Window.add_label(self, "background-color:white", controller.get_current_model())
 
@@ -250,10 +268,10 @@ class ClassifyWindow(Window):
 
     def init_ui(self):
         central_widget = QWidget()
-        grid_layout = Window.add_layout(self, 3, 1, 5, 5)
+        grid_layout = Window.add_layout(3, 1, 5, 5)
 
         grid_layout.addWidget(self.text_area, 0, 0, 2, 2)
-        additional_layout = Window.add_layout(self, 3, 10, 3, 3)
+        additional_layout = Window.add_layout(3, 10, 3, 3)
 
         additional_layout.addWidget(self.clf_image, 0, 1)
         additional_layout.addWidget(self.buttons[0], 2, 1)
@@ -271,7 +289,9 @@ class ClassifyWindow(Window):
 
 
 class MessageWindow(Window):
+    """Message window"""
     def __init__(self, controller):
+        logging.info("Initializing message window")
         Window.__init__(self, controller)
         self.setMinimumSize(QSize(600, 200))
         self.setMaximumSize(QSize(600, 200))
@@ -280,7 +300,7 @@ class MessageWindow(Window):
         self.label = QLabel(self)
         self.smile = Window.add_pix_map(self, IMAGES_ICON_PATH + 'smile.png')
         self.sad = Window.add_pix_map(self, IMAGES_ICON_PATH + 'sad.png')
-        self.grid_layout = Window.add_layout(self, 3, 3, 3, 3)
+        self.grid_layout = Window.add_layout(3, 3, 3, 3)
 
         self._center()
         self.init_ui()
