@@ -66,9 +66,9 @@ def train_fastai_classifier():
                .label_for_lm()
                .databunch(bs=bs))
     data_class = (TextList.from_folder(path, vocab=data_lm.vocab)
-                 .split_by_folder(valid='test')
-                 .label_from_folder(classes=['neg', 'pos'])
-                 .databunch(bs=bs))
+                  .split_by_folder(valid='test')
+                  .label_from_folder(classes=['neg', 'pos'])
+                  .databunch(bs=bs))
     logging.info("Loading model")
     clf_learner = text_classifier_learner(data_class, AWD_LSTM, drop_mult=0.5)
     try:
