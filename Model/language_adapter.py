@@ -5,9 +5,6 @@ from Model.loader import load_fastai_lm
 from abc import abstractmethod, ABCMeta
 import logging
 
-INDEX_FROM = 3
-MAX_WORDS = 500
-
 
 class LanguageAdapter(metaclass=ABCMeta):
     """Base adapter for language model to enable using models trained in different frameworks"""
