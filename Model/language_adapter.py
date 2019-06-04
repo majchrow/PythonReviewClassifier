@@ -3,6 +3,7 @@
 from Model.loader import get_all_lm
 from Model.loader import load_fastai_lm
 from abc import abstractmethod, ABCMeta
+import logging
 
 INDEX_FROM = 3
 MAX_WORDS = 500
@@ -11,6 +12,7 @@ MAX_WORDS = 500
 class LanguageAdapter(metaclass=ABCMeta):
     """Base adapter for language model to enable using models trained in different frameworks"""
     def __init__(self):
+        logging.debug("Initializing Language Model Adapter")
         self._lm = None
         self._name = None
 
@@ -56,3 +58,6 @@ class FastaiAdapter(LanguageAdapter):
         """Return text with n_words that come after text"""
         if self.lm is not None:
             return self.lm.predict(text=text, n_words=n_words, temperature=0.75)
+        else:
+            logging.warning('Fastai adapter does not have model loaded')
+            raise Exception('`Fastai language model` does not load model')

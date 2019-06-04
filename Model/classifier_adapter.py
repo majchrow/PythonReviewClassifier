@@ -6,19 +6,24 @@ from keras.datasets import imdb
 from keras.preprocessing import sequence
 from keras.preprocessing.text import text_to_word_sequence
 from Model.loader import load_fastai_clf, load_keras_clf
+import logging
 
 
 def create_adapter(name):
     """Function to create concrete adapters based on the model name"""
     if "keras" in name:
         return KerasClassifierAdapter(name)
-    else:
+    elif "fastai" in name:
         return FastaiClassifierAdapter(name)
+    else:
+        logging.warning("Wrong model name")
+        raise Exception(f'{name} should contain `keras` or `fastai`')
 
 
 class ClassifierAdapter(metaclass=ABCMeta):
     """Base adapter for classifier to enable using classifiers trained in different frameworks"""
     def __init__(self):
+        logging.debug("Initializing Classifier Adapter")
         self._clf = None
         self._name = None
 
@@ -67,6 +72,7 @@ class KerasClassifierAdapter(ClassifierAdapter):
 
     def predict(self, review):
         """Return predicted class and probability (>=0.5)"""
+        logging.info("Prediction using Keras classifier")
         ppreview = self.prepare_review_to_prediction(review)
         proba = self.clf.predict(ppreview)[0][0]
         return ("positive", proba) if proba > 0.5 else ("negative", 1 - proba)
@@ -105,6 +111,7 @@ class FastaiClassifierAdapter(ClassifierAdapter):
 
     def predict(self, review):
         """Return predicted class and probability (>=0.5)"""
+        logging.info("Prediction using Fastai classifier")
         prediction = self.clf.predict(review)
         proba = prediction[2][1].data.cpu().numpy().round(3)  # cast torch tensor to numpy float value
         return ("positive", proba) if proba > 0.5 else ("negative", 1 - proba)
