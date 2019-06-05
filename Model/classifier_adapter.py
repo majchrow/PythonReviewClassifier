@@ -73,24 +73,21 @@ class KerasClassifierAdapter(ClassifierAdapter):
     def predict(self, review):
         """Return predicted class and probability (>=0.5)"""
         logging.info("Prediction using Keras classifier")
-        ppreview = self.prepare_review_to_prediction(review)
+        ppreview = self._prepare_review_to_prediction(review)
         proba = self.clf.predict(ppreview)[0][0]
         return ("positive", proba) if proba > 0.5 else ("negative", 1 - proba)
 
-    def find_id(self, word):
-        if word in self.word_to_id.keys():
-            return self.word_to_id[word]
-        else:
-            return 0
+    def _find_id(self, word):
+        return self.word_to_id[word] if word in self.word_to_id.keys() else 0
 
-    def encode_review(self, review):
-        return [self.find_id(word) for word in text_to_word_sequence(review)]
+    def _encode_review(self, review):
+        return [self._find_id(word) for word in text_to_word_sequence(review)]
 
-    def prepare_review_to_prediction(self, review):
-        return self.padding((np.array([self.encode_review(review)])))
+    def _prepare_review_to_prediction(self, review):
+        return self._padding((np.array([self._encode_review(review)])))
 
     @staticmethod
-    def padding(array):
+    def _padding(array):
         return sequence.pad_sequences(np.array(array), maxlen=KerasClassifierAdapter.MAX_WORDS)
 
 
