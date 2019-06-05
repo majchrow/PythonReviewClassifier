@@ -3,7 +3,7 @@
 import numpy as np
 from abc import abstractmethod, ABCMeta
 from keras.datasets import imdb
-from keras.preprocessing import sequence
+from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import text_to_word_sequence
 from Model.loader import load_fastai_clf, load_keras_clf
 import logging
@@ -54,6 +54,7 @@ class KerasClassifierAdapter(ClassifierAdapter):
     """Concrete classifier trained in keras framework"""
     INDEX_FROM = 3
     MAX_WORDS = 500
+    DICT_LENGTH = 5000
 
     def __init__(self, name):
         super().__init__()
@@ -78,7 +79,7 @@ class KerasClassifierAdapter(ClassifierAdapter):
         return ("positive", proba) if proba > 0.5 else ("negative", 1 - proba)
 
     def _find_id(self, word):
-        return self.word_to_id[word] if word in self.word_to_id.keys() else 0
+        return self.word_to_id[word] if word in self.word_to_id.keys() and self.word_to_id[word] < 5000 else 0
 
     def _encode_review(self, review):
         return [self._find_id(word) for word in text_to_word_sequence(review)]
@@ -88,7 +89,7 @@ class KerasClassifierAdapter(ClassifierAdapter):
 
     @staticmethod
     def _padding(array):
-        return sequence.pad_sequences(np.array(array), maxlen=KerasClassifierAdapter.MAX_WORDS)
+        return pad_sequences(np.array(array), maxlen=KerasClassifierAdapter.MAX_WORDS)
 
 
 class FastaiClassifierAdapter(ClassifierAdapter):
