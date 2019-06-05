@@ -79,7 +79,7 @@ class KerasClassifierAdapter(ClassifierAdapter):
         return ("positive", proba) if proba > 0.5 else ("negative", 1 - proba)
 
     def _find_id(self, word):
-        return self.word_to_id[word] if word in self.word_to_id.keys() and self.word_to_id[word] < 5000 else 0
+        return self.word_to_id[word] if word in self.word_to_id.keys() and self.word_to_id[word] < KerasClassifierAdapter.DICT_LENGTH else 0
 
     def _encode_review(self, review):
         return [self._find_id(word) for word in text_to_word_sequence(review)]
